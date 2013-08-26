@@ -30,20 +30,18 @@ firewall_rule "ssh" do
 end
 
 # open standard http/https ports to tcp traffic only
-node['scdevs']['trusted_networks'].each do |src|
-  firewall_rule "http-#{src}" do
-    ports [ 80, 443 ]
-    protocol :tcp
-    source "#{src}"
-    direction :in
-    action :allow
-  end
+firewall_rule "http" do
+  ports [ 80, 443 ]
+  protocol :tcp
+  source "#{node['scdevs']['internal_network']}"
+  direction :in
+  action :allow
 end
 
 # open port 8080 to tcp traffic only on trusted networks
 node['scdevs']['trusted_networks'].each do |src|
   firewall_rule "http-alt-#{src}" do
-    ports [ 8080, 8083 ]
+    port_range 8080..8084
     protocol :tcp
     source "#{src}"
     direction :in
